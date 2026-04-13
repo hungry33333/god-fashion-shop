@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOD FASHION SHOP</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(45deg,#000,#111);
+    color: white;
+}
+
+/* HEADER */
+header {
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px gold;
+    z-index: 1000;
+}
+
+header img {
+    width: 110px;
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 5px gold); }
+    to { filter: drop-shadow(0 0 20px gold); }
+}
+
+/* SEARCH */
+.search-box {
+    padding: 10px;
+}
+.search-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+/* GRID มือถือ */
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+/* CARD */
+.card {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: 0.5s;
+    box-shadow: 0 0 10px rgba(255,215,0,0.2);
+}
+
+.card.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px gold;
+}
+
+.card img {
+    width: 100%;
+    transition: 0.4s;
+}
+
+.card:hover img {
+    transform: scale(1.1);
+}
+
+/* TEXT */
+.card h3 {
+    font-size: 14px;
+    margin: 5px;
+}
+
+.price {
+    color: gold;
+    font-size: 14px;
+    margin: 5px;
+}
+
+/* BUTTON */
+button {
+    width: 90%;
+    margin: 5px;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg,gold,orange);
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* เอฟเฟก scroll */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: gold;
+}
+
+/* จอใหญ่ */
+@media(min-width:768px){
+    .container {
+        grid-template-columns: repeat(4,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="images/logo.png">
+    <h3>GOD FASHION SHOP</h3>
+</header>
+
+<div class="search-box">
+    <input type="text" placeholder="ค้นหาสินค้า..." onkeyup="searchProduct(this.value)">
+</div>
+
+<div class="container" id="product-list"></div>
+
+<script>
+// ====== สินค้า ======
+let products = [
+    {name:"เสื้อคลุมแขนยาวมีฮู้ด",price:235,img:"https://down-th.img.susercontent.com/file/sg-11134201-824hp-mfc6ujqz9dl978.webp",link:"https://s.shopee.co.th/60Nd5AfRht"},
+    {name:"เสื้อแจ็คเก็ตผ้าร่ม",price:239,img:"https://down-cvs-th.img.susercontent.com/th-11134207-7r992-lslem8403feld9.webp",link:"https://s.shopee.co.th/6fdJscbn29"},
+    {name:"สื้อยืดoversizeunisex",price:88,img:"https://down-cvs-th.img.susercontent.com/sg-11134201-824g9-me6tn63q9bet62.webp",link:"https://s.shopee.co.th/901Ef73AZe"},
+    {name:"เสื้อแจ็คเก็ตผู้ชายกลางแจ้ง",price:259,img:"https://down-cvs-th.img.susercontent.com/th-11134207-7rash-m400uu8tshca45.webp",link:"https://s.shopee.co.th/6pwk5Ks0Nx"},
+{name:"กางเกงแฟชั่นสไตล์เกาหลีล่าสุด",price:259,img:"https://down-cvs-th.img.susercontent.com/th-11134207-81zte-mj6higp15eyv4a.webp",link:"https://s.shopee.co.th/2g7B7szey6"},
+{name:"กระเป๋ากางเกงขา",price:192,img:"https://down-cvs-th.img.susercontent.com/sg-11134201-7rdxb-mcudgzgzlw7o5e.webp",link:"https://s.shopee.co.th/4VYpJR3m1C"},
+{name:"กางเกงขายาวยางยืด",price:299,img:"https://down-ws-th.img.susercontent.com/th-11134207-7r98x-lvkzoswukxcyb9.webp",link:"https://s.shopee.co.th/7AZaUTYarW"},
+{name:"กางเกงขายาวชิโน่ ",price:219,img:"https://down-ws-th.img.susercontent.com/th-11134207-81ztd-mf0y9xtek4y7d4.webp",link:"https://s.shopee.co.th/8phoTegsmk"}
+];
+
+// แสดงสินค้า + animation
+function showProducts(list = products) {
+    let html = "";
+    list.forEach((p,i) => {
+        html += `
+        <div class="card" id="card${i}">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p class="price">${p.price} บาท</p>
+            <button onclick="buy('${p.link}')">สั่งซื้อ</button>
+        </div>
+        `;
+    });
+    document.getElementById("product-list").innerHTML = html;
+
+    // เอฟเฟกเด้งทีละตัว
+    setTimeout(()=>{
+        list.forEach((_,i)=>{
+            setTimeout(()=>{
+                document.getElementById("card"+i).classList.add("show");
+            }, i*100);
+        });
+    },100);
+}
+
+// ซื้อ
+function buy(link){
+    window.open(link);
+}
+
+// ค้นหา
+function searchProduct(text){
+    let filtered = products.filter(p => p.name.includes(text));
+    showProducts(filtered);
+}
+
+showProducts();
+</script>
+
+</body>
+</html>
